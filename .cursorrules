@@ -1,0 +1,50 @@
+# Repute Project Rules
+
+## Font Usage
+
+- Always use Mona Sans as the primary font (font-main class)
+- Use Geist Sans for secondary text (font-sans class)
+- Use Geist Mono for code elements (font-mono class)
+
+## Color System
+
+- Use custom color variables: --myprimary, --mysecondary, --myaccent
+- Apply colors with Tailwind classes: text-myaccent, bg-myprimary, etc.
+
+## Component Guidelines
+
+- Follow shadcn/ui component patterns
+- Use Tailwind CSS for styling
+- Maintain consistent spacing and typography
+- Ensure responsive design for all components
+
+## Code Style
+
+- Use TypeScript with strict typing
+- Follow Next.js App Router conventions
+- Use server components by default, client components only when needed
+- Implement proper error handling and loading states
+
+## File Structure & Organization
+
+- Place components in `/components` directory
+- Use `/lib` for utilities and shared functions
+- Keep API routes in `/app/api` following RESTful patterns
+- Use `/app` directory structure (page.tsx, layout.tsx, loading.tsx, error.tsx)
+- Group related components in subdirectories (e.g., `/components/ui`, `/components/forms`)
+
+## Performance & SEO
+
+- Use Next.js Image component for all images with proper alt text
+- Implement proper meta tags and Open Graph data
+- Use dynamic imports for heavy components
+- Optimize bundle size with tree shaking
+- Implement proper loading states and error boundaries
+
+## Accessibility (a11y)
+
+- Use semantic HTML elements
+- Add proper ARIA labels and roles
+- Ensure keyboard navigation works
+- Maintain proper color contrast ratios
+- Test with screen readers
