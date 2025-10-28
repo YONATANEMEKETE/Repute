@@ -45,7 +45,9 @@
 
   /*  */
   --color-myprimary: var(--myprimary);
+  --color-myprimary-gray: var(--myprimary-gray);
   --color-mysecondary: var(--mysecondary);
+  --color-mysecondary-lighter: var(--mysecondary-lighter);
   --color-myaccent: var(--myaccent);
 }
 
@@ -85,8 +87,10 @@
 
   /* my colors */
   --myprimary: #ffffff;
-  --mysecondary: #efefef;
-  --myaccent: #000000;
+  --myprimary-gray: #efefef;
+  --mysecondary: #000000;
+  --mysecondary-lighter: #0b0a0f;
+  --myaccent: #ff730e;
 }
 
 .dark {
