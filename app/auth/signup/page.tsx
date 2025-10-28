@@ -1,6 +1,6 @@
-import AuthCard from '@/components/auth/auth-card';
 import Image from 'next/image';
 import Link from 'next/link';
+import SignUpForm from '@/components/auth/SignUpForm';
 
 const page = () => {
   return (
@@ -9,14 +9,14 @@ const page = () => {
         <Image src="/main-logo.png" alt="logo" width={30} height={30} />
         {/*  */}
         <div className="flex items-center gap-x-1 text-mysecondary font-medium text-sm">
-          <div>Don't have an account?</div>
-          <Link href="/auth/signup" className="font-semibold underline">
-            Sign up
+          <div>Already have an account?</div>
+          <Link href="/auth/signin" className="font-semibold underline">
+            Sign in
           </Link>
         </div>
       </div>
       {/*  */}
-      <AuthCard />
+      <SignUpForm />
       {/*  */}
       <div className="w-full text-center">
         <p className="text-muted-foreground text-sm font-medium">
