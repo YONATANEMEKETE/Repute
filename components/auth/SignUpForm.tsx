@@ -34,7 +34,7 @@ const SignUpForm = () => {
                 className="w-full flex items-center gap-x-4 cursor-pointer h-10 text-sm font-semibold shadow-none"
               >
                 <Image src={googleIcon} alt="google" width={20} height={20} />
-                Continue with Google
+                Sign up with Google
               </Button>
             </div>
           </Field>
