@@ -4,17 +4,34 @@ import { Field, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { forgotPasswordSchema } from '@/app/schema/auth';
+import { z } from 'zod';
+
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 interface Props {
-  onSubmit: (email: string) => void;
+  onSubmitForm: (email: string) => void;
 }
 
-const ForgotPasswordForm = ({ onSubmit }: Props) => {
-  const [email, setEmail] = React.useState('');
+const ForgotPasswordForm = ({ onSubmitForm }: Props) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+    mode: 'onBlur',
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSubmit(email);
+  const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (data) => {
+    try {
+      console.log('Form data:', data);
+      onSubmitForm(data.email);
+    } catch (error) {
+      console.error('Forgot password error:', error);
+    }
   };
 
   return (
@@ -31,7 +48,7 @@ const ForgotPasswordForm = ({ onSubmit }: Props) => {
         </p>
       </div>
       {/* form */}
-      <form className="w-full" onSubmit={handleSubmit}>
+      <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -40,9 +57,14 @@ const ForgotPasswordForm = ({ onSubmit }: Props) => {
               type="email"
               placeholder="johndoe@example.com"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email')}
+              aria-invalid={errors.email ? 'true' : 'false'}
             />
+            {errors.email && (
+              <p className="text-sm text-destructive mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </Field>
           <Field>
             <Button type="submit" className="cursor-pointer">

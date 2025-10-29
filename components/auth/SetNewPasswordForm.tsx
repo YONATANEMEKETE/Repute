@@ -4,8 +4,32 @@ import { Field, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { resetPasswordSchema } from '@/app/schema/auth';
+import { z } from 'zod';
+
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const SetNewPasswordForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: 'onBlur',
+  });
+
+  const onSubmit: SubmitHandler<ResetPasswordFormData> = async (data) => {
+    try {
+      console.log('Form data:', data);
+      // TODO: handle password comfirmation here before procedding
+    } catch (error) {
+      console.error('Reset password error:', error);
+    }
+  };
+
   return (
     <div className="max-w-[400px] w-full flex flex-col items-center gap-y-10">
       <div className="grid place-content-center bg-myaccent/20 size-12 rounded-full">
@@ -20,7 +44,7 @@ const SetNewPasswordForm = () => {
         </p>
       </div>
       {/* form */}
-      <form className="w-full">
+      <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -28,7 +52,14 @@ const SetNewPasswordForm = () => {
               id="password"
               type="password"
               placeholder="Enter your password"
+              {...register('password')}
+              aria-invalid={errors.password ? 'true' : 'false'}
             />
+            {errors.password && (
+              <p className="text-sm text-destructive mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </Field>
           <Field>
             <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
@@ -36,7 +67,14 @@ const SetNewPasswordForm = () => {
               id="confirm-password"
               type="password"
               placeholder="Enter your password"
+              {...register('confirmPassword')}
+              aria-invalid={errors.confirmPassword ? 'true' : 'false'}
             />
+            {errors.confirmPassword && (
+              <p className="text-sm text-destructive mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </Field>
           <Field>
             <Button type="submit" className="cursor-pointer">

@@ -21,7 +21,7 @@ const ForgotPassword = () => {
       {emailSent ? (
         <EmailSent />
       ) : (
-        <ForgotPasswordForm onSubmit={handleSendEmail} />
+        <ForgotPasswordForm onSubmitForm={handleSendEmail} />
       )}
     </div>
   );
