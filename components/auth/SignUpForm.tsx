@@ -1,16 +1,14 @@
 'use client';
 
-import React from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import googleIcon from '@/public/google.svg';
-import { Separator } from '../ui/separator';
 import { Field, FieldGroup, FieldLabel, FieldSeparator } from '../ui/field';
 import { Input } from '../ui/input';
 import { ArrowRight } from 'lucide-react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signUpSchema } from '@/app/schema/auth';
+import { signUpSchema } from '@/schema/auth';
 import { z } from 'zod';
 
 type SignUpFormData = z.infer<typeof signUpSchema>;

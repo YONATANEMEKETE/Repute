@@ -4,7 +4,7 @@ import SetNewPasswordForm from './SetNewPasswordForm';
 import { useState } from 'react';
 
 const SetNewPassword = () => {
-  const [passwordSet, setPasswordSet] = useState<boolean>(false);
+  const [passwordSet] = useState<boolean>(false);
 
   return (
     <div className="w-full max-w-[400px]">

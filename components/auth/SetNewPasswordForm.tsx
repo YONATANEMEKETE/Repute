@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { resetPasswordSchema } from '@/app/schema/auth';
+import { resetPasswordSchema } from '@/schema/auth';
 import { z } from 'zod';
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

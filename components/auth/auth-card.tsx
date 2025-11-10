@@ -10,7 +10,7 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signInSchema } from '@/app/schema/auth';
+import { signInSchema } from '@/schema/auth';
 import { z } from 'zod';
 
 type SignInFormData = z.infer<typeof signInSchema>;
