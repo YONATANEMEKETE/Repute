@@ -1,7 +1,11 @@
-import React from 'react';
+import { Button } from '@/components/ui/button';
 
 const page = () => {
-  return <div>page</div>;
+  return (
+    <div className="h-screen grid place-content-center">
+      <Button>Sign Out</Button>
+    </div>
+  );
 };
 
 export default page;

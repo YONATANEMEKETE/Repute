@@ -5,15 +5,20 @@ import Image from 'next/image';
 import googleIcon from '@/public/google.svg';
 import { Field, FieldGroup, FieldLabel, FieldSeparator } from '../ui/field';
 import { Input } from '../ui/input';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema } from '@/schema/auth';
 import { z } from 'zod';
+import { useState } from 'react';
+import { signUpAction } from '@/actions/auth';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
 const SignUpForm = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -22,14 +27,30 @@ const SignUpForm = () => {
     resolver: zodResolver(signUpSchema),
     mode: 'onBlur',
   });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
-    try {
-      console.log('Form data:', data);
-      // TODO: handle confirm password too
-    } catch (error) {
-      console.error('Sign up error:', error);
+    setIsLoading(true);
+    console.log('Form data:', data);
+    const name = data.name;
+    const email = data.email;
+    const password = data.password;
+
+    // TODO: handle confirm password too
+    const result = await signUpAction({ name, email, password });
+    if (!result?.success) {
+      setError(result?.message || 'Something went wrong');
+      toast.error(result?.message || 'Something went wrong');
+    } else {
+      toast.success(
+        'we have sent a verification email to: ' +
+          email +
+          '. please check your inbox'
+      );
+      router.push('/auth/signin');
     }
+    setIsLoading(false);
   };
 
   return (
@@ -72,7 +93,6 @@ const SignUpForm = () => {
                 type="text"
                 {...register('name')}
                 placeholder="John Doe"
-                required
               />
               {errors.name && (
                 <p className="text-sm text-destructive mt-1">
@@ -87,7 +107,6 @@ const SignUpForm = () => {
                 type="email"
                 {...register('email')}
                 placeholder="johndoe@example.com"
-                required
               />
               {errors.email && (
                 <p className="text-sm text-destructive mt-1">
@@ -97,12 +116,7 @@ const SignUpForm = () => {
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                {...register('password')}
-                required
-              />
+              <Input id="password" type="password" {...register('password')} />
               {errors.password && (
                 <p className="text-sm text-destructive mt-1">
                   {errors.password.message}
@@ -117,7 +131,6 @@ const SignUpForm = () => {
                 id="confirm-password"
                 type="password"
                 {...register('confirmPassword')}
-                required
               />
               {errors.confirmPassword && (
                 <p className="text-sm text-destructive mt-1">
@@ -127,11 +140,24 @@ const SignUpForm = () => {
             </Field>
           </div>
           <Field>
-            <Button type="submit" className="cursor-pointer group">
-              Sign up{' '}
-              <ArrowRight className="group:hover:translate-x-3 transition-all" />
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="cursor-pointer group"
+            >
+              {isLoading ? 'Registering...' : 'Register'}{' '}
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <ArrowRight
+                  className={`group:hover:translate-x-3 transition-all`}
+                />
+              )}
             </Button>
           </Field>
+          {error && (
+            <p className="text-sm text-destructive mt-1 text-center">{error}</p>
+          )}
         </FieldGroup>
       </form>
       {/*  */}
