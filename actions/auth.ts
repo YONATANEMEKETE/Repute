@@ -62,4 +62,5 @@ export const signOutAction = async () => {
   } catch (error) {
     console.log(error);
   }
+  redirect('/auth/signin');
 };

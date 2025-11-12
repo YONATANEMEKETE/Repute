@@ -1,8 +1,19 @@
 import AuthCard from '@/components/auth/auth-card';
+import { auth } from '@/lib/auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-const page = () => {
+const page = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session) {
+    redirect('/dashboard');
+  }
+
   return (
     <div className="basis-[60%] bg-myprimary rounded-2xl shadow-lg px-6 py-4 flex flex-col justify-between items-center">
       <div className="w-full flex items-center justify-between">
