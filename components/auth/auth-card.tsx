@@ -1,37 +1,51 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import googleIcon from '@/public/google.svg';
 import { Field, FieldGroup, FieldLabel, FieldSeparator } from '../ui/field';
 import { Input } from '../ui/input';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInSchema } from '@/schema/auth';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
+import { signInAction } from '@/actions/auth';
+import { toast } from 'sonner';
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
 const AuthCard = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     mode: 'onBlur',
   });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
-    try {
-      console.log('Form data:', data);
-      // Add your authentication logic here
-    } catch (error) {
-      console.error('Sign in error:', error);
+    setIsLoading(true);
+    const email = data.email;
+    const password = data.password;
+
+    const result = await signInAction({ email, password });
+    if (!result.success) {
+      setError(result.message || 'something went wrong!');
+      toast.error(result.message || 'something went wrong!');
+    } else {
+      toast.success('Signin Successful');
+      router.push('/dashboard');
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -110,12 +124,19 @@ const AuthCard = () => {
             <Button
               type="submit"
               className="cursor-pointer group"
-              disabled={isSubmitting}
+              disabled={isLoading}
             >
-              {isSubmitting ? 'Signing in...' : 'Login'}{' '}
-              <ArrowRight className="group:hover:translate-x-3 transition-all" />
+              {isLoading ? 'Signing in...' : 'Login'}{' '}
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <ArrowRight className="group:hover:translate-x-3 transition-all" />
+              )}
             </Button>
           </Field>
+          {error && (
+            <p className="text-sm text-destructive mt-1 text-center">{error}</p>
+          )}
         </FieldGroup>
       </form>
       {/*  */}
