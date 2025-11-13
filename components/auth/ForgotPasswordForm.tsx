@@ -1,4 +1,4 @@
-import { ArrowLeft, KeySquare } from 'lucide-react';
+import { ArrowLeft, KeySquare, Loader2 } from 'lucide-react';
 import React from 'react';
 import { Field, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
@@ -13,9 +13,11 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 interface Props {
   onSubmitForm: (email: string) => void;
+  isLoading: boolean;
+  error: string | null;
 }
 
-const ForgotPasswordForm = ({ onSubmitForm }: Props) => {
+const ForgotPasswordForm = ({ onSubmitForm, isLoading, error }: Props) => {
   const {
     register,
     handleSubmit,
@@ -26,12 +28,7 @@ const ForgotPasswordForm = ({ onSubmitForm }: Props) => {
   });
 
   const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (data) => {
-    try {
-      console.log('Form data:', data);
-      onSubmitForm(data.email);
-    } catch (error) {
-      console.error('Forgot password error:', error);
-    }
+    onSubmitForm(data.email);
   };
 
   return (
@@ -67,10 +64,18 @@ const ForgotPasswordForm = ({ onSubmitForm }: Props) => {
             )}
           </Field>
           <Field>
-            <Button type="submit" className="cursor-pointer">
-              Send
+            <Button
+              disabled={isLoading}
+              type="submit"
+              className="cursor-pointer"
+            >
+              {isLoading ? 'Sending...' : 'Send'}
+              {isLoading && <Loader2 className="animate-spin" />}
             </Button>
           </Field>
+          {error && (
+            <p className="text-sm text-destructive mt-1 text-center">{error}</p>
+          )}
         </FieldGroup>
       </form>
       {/*  */}

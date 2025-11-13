@@ -2,7 +2,12 @@ import { ArrowLeft, Mail } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-const EmailSent = () => {
+interface Props {
+  email: string;
+  onResend: (email: string) => void;
+}
+
+const EmailSent = ({ email, onResend }: Props) => {
   return (
     <div className="max-w-[400px] w-full flex flex-col items-center gap-y-10">
       <div className="grid place-content-center bg-myaccent/20 size-12 rounded-full">
@@ -13,11 +18,14 @@ const EmailSent = () => {
           Check Your Email
         </h2>
         <p className="text-mysecondary/70 text-sm font-semibold">
-          We have sent a Password reset link to johndoe@example.com
+          We have sent a Password reset link to {email}
         </p>
         <div className="text-sm text-mysecondary/70 mt-4">
           Didn't recieve the email{' '}
-          <span className="font-medium hover:underline cursor-pointer text-mysecondary">
+          <span
+            onClick={() => onResend(email)}
+            className="font-medium hover:underline cursor-pointer text-mysecondary"
+          >
             click to resend.
           </span>
         </div>

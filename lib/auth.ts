@@ -4,6 +4,7 @@ import { PrismaClient } from './generated/prisma/client';
 import { nextCookies } from 'better-auth/next-js';
 import { Resend } from 'resend';
 import VerifyEmail from '@/components/email/VerifyEmail';
+import ForgotPasswordEmail from '@/components/email/ForgotPasswordEmail';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const prisma = new PrismaClient();
@@ -17,6 +18,18 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     autoSignIn: false,
+    sendResetPassword: async ({ user, url }) => {
+      await resend.emails.send({
+        from: `Acme <onboarding@resend.dev>`,
+        to: user.email,
+        subject: 'Reset your password - Action required',
+        react: ForgotPasswordEmail({
+          username: user.name,
+          resetUrl: url,
+          userEmail: user.email,
+        }),
+      });
+    },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {

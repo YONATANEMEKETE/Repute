@@ -1,4 +1,6 @@
-import { ArrowLeft, KeySquare } from 'lucide-react';
+'use client';
+
+import { ArrowLeft, KeySquare, Loader2 } from 'lucide-react';
 import React from 'react';
 import { Field, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
@@ -8,10 +10,14 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema } from '@/schema/auth';
 import { z } from 'zod';
+import { toast } from 'sonner';
+import { resetPasswordAction } from '@/actions/auth';
+import { useRouter } from 'next/navigation';
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const SetNewPasswordForm = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -20,14 +26,34 @@ const SetNewPasswordForm = () => {
     resolver: zodResolver(resetPasswordSchema),
     mode: 'onBlur',
   });
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const onSubmit: SubmitHandler<ResetPasswordFormData> = async (data) => {
-    try {
-      console.log('Form data:', data);
-      // TODO: handle password comfirmation here before procedding
-    } catch (error) {
-      console.error('Reset password error:', error);
+    setIsLoading(true);
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (!token) {
+      toast.error('Invalid token');
+      return;
     }
+
+    const newPassword = data.password;
+
+    const result = await resetPasswordAction({
+      token,
+      newPassword,
+    });
+
+    if (!result.success) {
+      toast.error(result.message || 'Something went wrong');
+      setError(result.message || 'Something went wrong');
+      return;
+    } else {
+      toast.success('Password reset successfully');
+      router.push('/auth/signin');
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -77,10 +103,18 @@ const SetNewPasswordForm = () => {
             )}
           </Field>
           <Field>
-            <Button type="submit" className="cursor-pointer">
-              Set Password
+            <Button
+              disabled={isLoading}
+              type="submit"
+              className="cursor-pointer"
+            >
+              {isLoading ? 'Setting Password...' : 'Set Password'}
+              {isLoading && <Loader2 className="animate-spin" />}
             </Button>
           </Field>
+          {error && (
+            <p className="text-sm text-destructive mt-1 text-center">{error}</p>
+          )}
         </FieldGroup>
       </form>
       {/*  */}

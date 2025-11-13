@@ -64,3 +64,43 @@ export const signOutAction = async () => {
   }
   redirect('/auth/signin');
 };
+
+export const sendResetPasswordemail = async (
+  email: string
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    await auth.api.requestPasswordReset({
+      body: {
+        email: email,
+        redirectTo: '/auth/set-password',
+      },
+    });
+    return { success: true, message: 'reset password email sent' };
+  } catch (error) {
+    console.log(error);
+    const e = error as Error;
+    return { success: false, message: e.message };
+  }
+};
+
+export const resetPasswordAction = async ({
+  token,
+  newPassword,
+}: {
+  token: string;
+  newPassword: string;
+}): Promise<{ success: boolean; message: string }> => {
+  try {
+    await auth.api.resetPassword({
+      body: {
+        newPassword: newPassword,
+        token: token,
+      },
+    });
+    return { success: true, message: 'password reset successful' };
+  } catch (error) {
+    console.log(error);
+    const e = error as Error;
+    return { success: false, message: e.message };
+  }
+};

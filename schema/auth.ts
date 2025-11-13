@@ -47,14 +47,19 @@ export const forgotPasswordSchema = z.object({
   }),
 });
 
-export const resetPasswordSchema = z.object({
-  password: z.string().min(6, {
-    error: (em) =>
-      em.input === undefined
-        ? 'Password is required'
-        : 'Password must be at least 6 characters long',
-  }),
-  confirmPassword: z.string().min(6, {
-    error: 'confirm your password first.',
-  }),
-});
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(6, {
+      error: (em) =>
+        em.input === undefined
+          ? 'Password is required'
+          : 'Password must be at least 6 characters long',
+    }),
+    confirmPassword: z.string().min(6, {
+      error: 'confirm your password first.',
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
