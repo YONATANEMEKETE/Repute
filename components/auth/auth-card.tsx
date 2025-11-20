@@ -13,8 +13,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signInSchema } from '@/schema/auth';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { signInAction } from '@/actions/auth';
+import { signInAction, signInWithGoogle } from '@/actions/auth';
 import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
@@ -30,6 +31,7 @@ const AuthCard = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isgoogleloading, setIsGoogleLoading] = useState<boolean>(false);
   const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -71,6 +73,22 @@ const AuthCard = () => {
     setIsLoading(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsGoogleLoading(true);
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/dashboard',
+      });
+    } catch (error) {
+      console.log(error);
+      const e = error as Error;
+      toast.error(e.message);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-y-10 max-w-[400px] w-full">
       <div className="space-y-6 text-center w-full">
@@ -92,12 +110,17 @@ const AuthCard = () => {
           <Field>
             <div className="space-y-2 w-full">
               <Button
+                onClick={handleGoogleSignIn}
                 type="button"
                 variant={'outline'}
                 className="w-full flex items-center gap-x-4 cursor-pointer h-10 text-sm font-semibold shadow-none"
+                disabled={isgoogleloading}
               >
                 <Image src={googleIcon} alt="google" width={20} height={20} />
-                Sign in with Google
+                {isgoogleloading
+                  ? 'Signing in with Google...'
+                  : 'Sign in with Google'}
+                {isgoogleloading && <Loader2 className="animate-spin" />}
               </Button>
             </div>
           </Field>

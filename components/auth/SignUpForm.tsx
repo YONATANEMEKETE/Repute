@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { signUpAction } from '@/actions/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
@@ -29,6 +30,7 @@ const SignUpForm = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isgoogleloading, setIsGoogleLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
     setIsLoading(true);
@@ -51,6 +53,22 @@ const SignUpForm = () => {
       router.push('/auth/signin');
     }
     setIsLoading(false);
+  };
+
+  const handleSignUpWithGoogle = async () => {
+    try {
+      setIsGoogleLoading(true);
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/dashboard',
+      });
+    } catch (error) {
+      console.log(error);
+      const e = error as Error;
+      toast.error(e.message);
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
@@ -76,9 +94,14 @@ const SignUpForm = () => {
               <Button
                 variant={'outline'}
                 className="w-full flex items-center gap-x-4 cursor-pointer h-10 text-sm font-semibold shadow-none"
+                onClick={handleSignUpWithGoogle}
+                disabled={isgoogleloading}
               >
                 <Image src={googleIcon} alt="google" width={20} height={20} />
-                Sign up with Google
+                {isgoogleloading
+                  ? 'Signing up with Google...'
+                  : 'Sign up with Google'}
+                {isgoogleloading && <Loader2 className="animate-spin" />}
               </Button>
             </div>
           </Field>
