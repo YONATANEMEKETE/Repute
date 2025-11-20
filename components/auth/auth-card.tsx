@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import googleIcon from '@/public/google.svg';
@@ -30,6 +30,15 @@ const AuthCard = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
     setIsLoading(true);
@@ -38,8 +47,22 @@ const AuthCard = () => {
 
     const result = await signInAction({ email, password });
     if (!result.success) {
-      setError(result.message || 'something went wrong!');
-      toast.error(result.message || 'something went wrong!');
+      const errorMessage =
+        result.message === 'Invalid email or password' || 'EMAIL not verified'
+          ? result.message
+          : 'something went wrong!';
+      setError(errorMessage);
+      toast.error(errorMessage);
+
+      // Clear any existing timeout
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+
+      // Set new timeout to clear error after 3 seconds
+      errorTimeoutRef.current = setTimeout(() => {
+        setError(null);
+      }, 3000);
     } else {
       toast.success('Signin Successful');
       router.push('/dashboard');

@@ -104,17 +104,14 @@ const AppSidebar = () => {
           </SidebarMenuItem>
 
           {/* Platforms Collapsible */}
-          <Collapsible
-            defaultOpen={true}
-            className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-          >
+          <Collapsible defaultOpen={true} className="group/collapsible">
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
+              <CollapsibleTrigger asChild className="">
                 <SidebarMenuButton
                   tooltip="Platforms"
-                  className="cursor-pointer"
+                  className="cursor-pointer group"
                 >
-                  <ChevronRight className="w-4 h-4 transition-transform [group-data-[state=open]/collapsible:rotate-90]" />
+                  <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]:rotate-90" />
                   <span className="font-main font-medium">Platforms</span>
                 </SidebarMenuButton>
               </CollapsibleTrigger>
